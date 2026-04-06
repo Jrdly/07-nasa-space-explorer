@@ -7,12 +7,13 @@
 
 /* Base page styles */
 body {
+  min-height: 100vh;
+  padding: 20px;
   font-family: Arial, sans-serif;
   background-color: #f1f1f1;
-  padding: 20px;
+  color: #222;
 }
 
-/* Centered container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -23,9 +24,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0;
   margin-bottom: 20px;
+  text-align: center;
+}
+
+.logo {
+  width: 140px;
+  margin-right: 15px;
 }
 
 h1 {
@@ -34,13 +40,7 @@ h1 {
   color: #212121;
 }
 
-/* Logo */
-.logo {
-  width: 140px;
-  margin-right: 15px;
-}
-
-/* Date‐picker & button row */
+/* Date picker & button row */
 .filters {
   display: flex;
   flex-direction: column;
@@ -50,95 +50,223 @@ h1 {
   padding: 0 20px;
 }
 
-/* Inputs and buttons */
 input[type="date"],
 button {
-  font-family: Arial, sans-serif;
-  font-weight: normal;
-  color: #666;
+  width: 100%;
   padding: 10px 15px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-family: Arial, sans-serif;
   font-size: 16px;
   line-height: 1.4;
-  width: 100%;
 }
 
-/* Button specific */
-button {
-  background-color: #d3d3d3;
-  color: black;
-  cursor: pointer;
+input[type="date"] {
+  color: #666;
+  background: #fff;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.7;
+}
+
+button {
+  cursor: pointer;
+  color: #000;
+  background-color: #d3d3d3;
+}
+
 button:hover {
   background-color: #bfbfbf;
 }
 
-/* Stack horizontally on wider screens */
-@media (min-width: 600px) {
-  .filters {
-    flex-direction: row;
-    padding: 0;
-  }
-  
-  input[type="date"],
-  button {
-    width: auto;
-  }
+button:focus-visible,
+input[type="date"]:focus-visible,
+.modal-close:focus-visible,
+.gallery-image-button:focus-visible {
+  outline: 3px solid #888;
+  outline-offset: 3px;
+}
+
+/* Loading / status */
+.status-message {
+  min-height: 1.5rem;
+  margin: 0 0 16px;
+  color: #666;
+  text-align: center;
+}
+
+.status-message.is-loading {
+  color: #444;
 }
 
 /* Gallery flex container */
 .gallery {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding: 20px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  padding-bottom: 24px;
 }
 
 /* Gallery items */
 .gallery-item {
-  flex: 1 1 100%;  /* full width by default */
-  min-width: 280px;
-  max-width: 500px;
-  background: white;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Three columns on wider screens */
-@media (min-width: 1000px) {
-  .gallery-item {
-    flex: 0 1 31%;
-  }
+.gallery-image-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.gallery-image-button:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .gallery-item img {
+  display: block;
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-radius: 4px;
 }
 
-.gallery-item p {
-  margin-top: 10px;
-  padding: 5px;
-  font-size: 14px;
+.gallery-item h2 {
+  padding: 16px 16px 8px;
+  font-size: 1rem;
+  line-height: 1.35;
+  color: #222;
+}
+
+.gallery-date,
+.gallery-hint {
+  padding: 0 16px 16px;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.gallery-hint {
+  color: #555;
 }
 
 /* Placeholder content */
 .placeholder {
-  flex: 1 1 100%;
+  grid-column: 1 / -1;
   text-align: center;
-  padding: 40px;
+  padding: 40px 20px;
   color: #666;
 }
 
 .placeholder-icon {
-  font-size: 48px;
   margin-bottom: 20px;
+  font-size: 48px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: none;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+  position: relative;
+  width: min(920px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #000;
+  background: #e6e6e6;
+  box-shadow: none;
+}
+
+.modal-media img,
+.modal-media iframe {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  border: 0;
+  object-fit: cover;
+  background: #000;
+}
+
+.modal-copy {
+  padding: 22px 24px 28px;
+  color: #222;
+}
+
+.modal-copy h2 {
+  margin-bottom: 10px;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  line-height: 1.2;
+  color: #222;
+}
+
+.modal-date {
+  margin-bottom: 14px;
+  color: #666;
+  font-weight: 700;
+}
+
+.modal-explanation {
+  color: #444;
+  line-height: 1.7;
+}
+
+/* Stack horizontally on wider screens */
+@media (min-width: 700px) {
+  .filters {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  input[type="date"] {
+    flex: 1 1 0;
+  }
+
+  button {
+    width: auto;
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 16px;
+  }
+
+  .modal-copy {
+    padding: 18px 18px 24px;
+  }
 }
